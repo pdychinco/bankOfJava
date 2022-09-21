@@ -6,6 +6,14 @@ public class ATM {
   private Users currentUser;
   private final Scanner scan = new Scanner(System.in);
   private boolean loggedIn = false;
+  private boolean runTime = true;
+  
+  public boolean isRunTime() {
+    return runTime;
+  }
+  public void setRunTime(boolean runTime) {
+    this.runTime = runTime;
+  }
   public boolean isLoggedIn() {
     return loggedIn;
   }
@@ -36,8 +44,7 @@ public class ATM {
     System.out.println("Start of ATM Script");
     System.out.println("-------------------------------------------");
     System.out.println("Welcome to Bank of Java.");
-    boolean runTime = true;
-    while (runTime) {
+    while (this.isRunTime()) {
       if (this.isLoggedIn()) {
         this.accountPage();
       } else {
@@ -45,9 +52,9 @@ public class ATM {
         switch (userChoice) {
           case "1" -> this.login();
           case "2" -> this.createUser();
-          case "q" -> {
+          case "Q" -> {
             System.out.println("Thanks for banking at Bank of Java! See you soon.");
-            runTime = false;
+            this.setRunTime(false);
           }
         }
       }
@@ -118,32 +125,62 @@ public class ATM {
     System.out.println("1. Account Balance");
     System.out.println("2. Deposit");
     System.out.println("3. Withdraw");
+    System.out.println("Q. Quit the program");
     String userInput = scan.next();
     System.out.println(userInput);
     switch (userInput) {
-      case "1" -> this.chooseAccount();
-      case "2" -> this.createUser();
-      case "q" -> {
+      case "1" -> this.accountBalance();
+      case "2" -> this.depositMenu();
+      case "3" -> this.withdrawMenu();
+      case "Q" -> {
+        this.setLoggedIn(false);
+        this.setRunTime(false);
         System.out.println("Thanks for banking at Bank of Java! See you soon.");
       }
     }
   }
   
-  public String chooseAccount() {
+  public Account chooseAccount() {
     if(this.getCurrentUser().getcAccount() != null && this.getCurrentUser().getsAccount() != null) {
       System.out.println("Please pick between your two accounts");
       System.out.println("1. Saving Account");
       System.out.println("2. Checking Account");
-      return scan.next();
+      boolean userInput = Boolean.parseBoolean(scan.next());
+      if(userInput) {
+        return this.getCurrentUser().getsAccount();
+      } else {
+        return this.getCurrentUser().getcAccount();
+      }
     } else if (this.getCurrentUser().getcAccount() != null) {
       System.out.println("You only have a Checking Account currently.");
+      return this.getCurrentUser().getcAccount();
     } else {
       System.out.println("You only have a Saving Account currently.");
+      return this.getCurrentUser().getsAccount();
     }
-    return null;
   }
   
   public void accountBalance() {
-    String userInput = this.chooseAccount();
+    Account account = this.chooseAccount();
+    account.checkBalance();
+  }
+  
+  public void depositMenu() {
+    Account account = this.chooseAccount();
+    System.out.println("How much would you like to deposit?");
+    float cashAmount = Float.parseFloat(scan.next());
+    account.deposit(cashAmount);
+  }
+  
+  public void withdrawMenu() {
+    Account account = this.chooseAccount();
+    float cashAmount = 0;
+    do {
+      System.out.println("How much would you like to withdraw?");
+      cashAmount = Float.parseFloat(scan.next());
+      if(cashAmount > account.getBalance()) {
+        System.out.println("You do not have enough money! Please enter a lower amount");
+      }
+    } while(cashAmount > account.getBalance());
   }
 }

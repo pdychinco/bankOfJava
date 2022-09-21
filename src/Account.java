@@ -44,7 +44,7 @@ abstract public class Account {
   }
   
   public void checkBalance() {
-    System.out.println("Your current balance is " + this.getBalance());
+    System.out.println("Your current balance is $" + this.getBalance());
   }
   
   public void checkInterest() {
