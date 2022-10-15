@@ -3,4 +3,4 @@
 
 This project was created using OOP Theology and Java.
 
-To run the application, run `Main.java`.
+To run the application, clone the repo then run `Main.java`.
